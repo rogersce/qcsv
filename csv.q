@@ -1,4 +1,4 @@
-.csv.standardize_cols:{`${ssr[;"#";"Num"] ssr[;"(";"_"] ssr[;" ";"_"] ssr[;".";"_"] ssr[;"\"";""] trim x} each x};
+.csv.standardize_cols:{`${ssr[;"#";"Num"] ssr[;")";"_"] ssr[;"(";"_"] ssr[;" ";"_"] ssr[;".";"_"] ssr[;"\"";""] trim x} each x};
 
 .csv.guess_type:{[tbl]
     guess:{[x]
@@ -20,11 +20,11 @@
     };
 
 .csv.read:{[csvfile;has_hdr]
-    colnames:`$ $[has_hdr;::;{"c",'string til count x}] "," vs $[-11h=type csvfile;first system "head -n 1 ",1 _ string csvfile;csvfile[0]];
+    tbl:$[-11h=type csvfile;read0 csvfile;csvfile];
+    colnames:$[has_hdr;.csv.standardize_cols;{`$"c",'string til count x}] "," vs tbl[0];
 
     hdr:(count colnames)#"*";
-    tbl:flip colnames!(hdr;",")0:csvfile;
+    tbl:flip colnames!(hdr;",")0:tbl;
 
-    if[has_hdr; tbl:1 _ (.csv.standardize_cols value raze 1#tbl) xcol tbl;];
-    : tbl
+    : $[has_hdr;1_tbl;tbl]
     };
